@@ -1,0 +1,8 @@
+# Copyright (c) 2021 LION
+# SPDX-License-Identifier: Apache-2.0
+
+build:
+  kconfig: Kconfig
+  # Path to the folder that contains the CMakeLists.txt file to be included by
+  # Zephyr build system.
+  cmake: .

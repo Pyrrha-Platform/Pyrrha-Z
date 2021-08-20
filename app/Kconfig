@@ -1,0 +1,12 @@
+# Copyright (c) 2021 LION
+# SPDX-License-Identifier: Apache-2.0
+#
+# This file is the application Kconfig entry point.
+
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu
+
+module = PYRRHA
+module-str = PYRRHA
+source "subsys/logging/Kconfig.template.log_config"

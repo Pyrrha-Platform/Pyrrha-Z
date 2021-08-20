@@ -1,0 +1,17 @@
+# Copyright (c) 2021 LION
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  self:
+    path: Pyrrha-Z
+
+  remotes:
+    - name: zephyrproject-rtos
+      url-base: https://github.com/zephyrproject-rtos
+
+  projects:
+    - name: zephyr
+      remote: zephyrproject-rtos
+      revision: zephyr-v2.6.0
+      import:
+        path-prefix: rtos
