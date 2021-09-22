@@ -1,0 +1,7 @@
+description: |
+    Amphenol humidity and temperature sensor. See
+    https://www.amphenol-sensors.com/en/telaire/humidity/527-humidity-sensors/3095-chipcap-2
+
+compatible: "amphenol,cc2d23s"
+
+include: i2c-device.yaml
