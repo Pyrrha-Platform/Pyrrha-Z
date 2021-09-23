@@ -144,9 +144,10 @@ static int cc2d23s_sample_fetch(const struct device *dev, enum sensor_channel ch
 {
 	struct cc2d23s_data *data = dev->data;
 
-	__ASSERT_NO_MSG(chan == SENSOR_CHAN_ALL || chan == SENSOR_CHAN_AMBIENT_TEMP || chan == SENSOR_CHAN_HUMIDITY);
-
-	return cc2d23s_read_rht(dev, &data->rht);
+	if(chan == SENSOR_CHAN_ALL || chan == SENSOR_CHAN_AMBIENT_TEMP || chan == SENSOR_CHAN_HUMIDITY){
+		return cc2d23s_read_rht(dev, &data->rht);
+	}
+	return -ENOTSUP;
 }
 
 /**
@@ -165,8 +166,6 @@ static int cc2d23s_channel_get(const struct device *dev,
 {
 	struct cc2d23s_data *data = dev->data;
 	struct cc2d23s_sensor_data * rht = &data->rht;
-
-	__ASSERT_NO_MSG(chan == SENSOR_CHAN_AMBIENT_TEMP || chan == SENSOR_CHAN_HUMIDITY);
 
 	switch (chan) {
 		case SENSOR_CHAN_AMBIENT_TEMP:

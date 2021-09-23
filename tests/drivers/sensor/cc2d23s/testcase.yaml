@@ -1,6 +1,0 @@
-tests:
-  drivers.sensor.cc2d23s:
-    build_only: true
-    filter: dt_compat_enabled("amphenol,cc2d23s")
-    integration_platforms:
-      - nrf52840dk_nrf52840
