@@ -5,4 +5,3 @@
 # as the module Kconfig entry point (see zephyr/module.yml).
 
 rsource "extras/drivers/Kconfig"
-
