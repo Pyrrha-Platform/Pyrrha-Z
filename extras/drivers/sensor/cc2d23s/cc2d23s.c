@@ -42,50 +42,6 @@ static int cc2d23s_read(const struct device *dev, uint8_t *buf, uint32_t len)
 }
 
 /**
- * @brief Perform an I2C write transaction on the cc2d23s
- * 
- * @param dev device containing driver data
- * @param buf buffer containing the data to be sent to the device
- * @param len number of bytes to written from `buf`
- * @retval 0 on success
- * @retval -errno otherwise
- */
-static int cc2d23s_write(const struct device *dev, uint8_t * buf, uint32_t len)
-{
-    const struct cc2d23s_data *data = dev->data;
-	const struct cc2d23s_config *cfg = dev->config;
-
-	return i2c_write(data->i2c_master, buf, len, cfg->i2c_addr);
-}
-
-/**
- * @brief Enter command mode on the cc2d23s as described
- * in section 4.9 in the ChipCap2 Application Guide
- * 
- * @param dev device containing driver data
- * @retval 0 on success
- * @retval -errno otherwise 
- */
-static int cc2d23s_enter_command_mode(const struct device * dev){
-	uint8_t buf[] = {CC2D23S_REG_COMMAND_MODE, 0, 0};
-	return cc2d23s_write(dev, buf, sizeof(buf));
-}
-
-/**
- * @brief Ends command mode on the cc2d23s 
- * and enters normal operation mode as described
- * in section 4.9 in the ChipCap2 Application Guide
- * 
- * @param dev device containing driver data
- * @retval 0 on success
- * @retval -errno otherwise
- */
-static int cc2d23s_enter_normal_mode(const struct device * dev){
-	uint8_t buf[] = {CC2D23S_REG_NORMAL_MODE, 0, 0};
-	return cc2d23s_write(dev, buf, sizeof(buf));
-}
-
-/**
  * @brief Read sensor data from cc2d23s
  * 
  * @param dev device containing driver data

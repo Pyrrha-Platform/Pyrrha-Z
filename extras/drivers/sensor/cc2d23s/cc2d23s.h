@@ -20,9 +20,6 @@
 #include <sys/util.h>
 #include <drivers/gpio.h>
 
-#define CC2D23S_REG_COMMAND_MODE	0xA0
-#define CC2D23S_REG_NORMAL_MODE		0x80
-
 /**
  * @brief data structure containing all data retreived from cc2d23s on fetch
  * 
