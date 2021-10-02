@@ -1,0 +1,12 @@
+# Copyright (c) 2021 LION
+# SPDX-License-Identifier: Apache-2.0
+
+menuconfig CC2D23S
+	bool "CC2D23S Temperature and Humidity Sensor"
+	depends on I2C
+	help
+	  Enable driver for CC2D23S.
+
+if CC2D23S
+
+endif
