@@ -4,14 +4,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-&i2c0 {
-	rht_sensor: cc2d23s@28 {
-		compatible = "amphenol,cc2d23s";
-		reg = <0x28>;
-		label = "CC2D23S";
-	};
-};
-
 / {
 	gas_sensor: mics4514 {
 		label = "MICS4514";

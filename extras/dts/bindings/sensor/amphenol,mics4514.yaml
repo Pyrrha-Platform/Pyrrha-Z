@@ -1,0 +1,7 @@
+description: |
+    Amphenol (SGX Sensortech) MOS gas sensor. See
+    https://www.sgxsensortech.com/content/uploads/2014/08/0278_Datasheet-MiCS-4514-rev-16.pdf
+
+compatible: "amphenol,mics4514"
+
+include: base.yaml

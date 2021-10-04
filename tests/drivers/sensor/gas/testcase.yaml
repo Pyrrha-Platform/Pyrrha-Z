@@ -1,0 +1,5 @@
+tests:
+  drivers.sensor.gas:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    tags: pyrrha gas
