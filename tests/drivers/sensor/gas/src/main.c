@@ -39,11 +39,8 @@ void test_get_sensor_value_not_supp(int16_t channel)
 }
 
 static bool is_channel_supported(int16_t channel){
-	switch(channel){
-		case SENSOR_CHAN_ALL:
-		return true;
-		default: return false;
-	}
+	/* Only the "all" channel is supported in the default channels */
+	return channel == SENSOR_CHAN_ALL;
 }
 
 static void test_unspported_channel(void){
@@ -65,31 +62,11 @@ static void test_get_no2(void){
     test_get_sensor_value(SENSOR_CHAN_MICS4514_NO2);
 }
 
-static void test_get_c2h5oh(void){
-    test_get_sensor_value(SENSOR_CHAN_MICS4514_C2H5OH);
-}
-
-static void test_get_h2(void){
-    test_get_sensor_value(SENSOR_CHAN_MICS4514_H2);
-}
-
-static void test_get_nh3(void){
-    test_get_sensor_value(SENSOR_CHAN_MICS4514_NH3);
-}
-
-static void test_get_ch4(void){
-    test_get_sensor_value(SENSOR_CHAN_MICS4514_CH4);
-}
-
 void test_main(void)
 {
     ztest_test_suite(gas_sensor_tests,
 		ztest_unit_test(test_get_co),
         ztest_unit_test(test_get_no2),
-		ztest_unit_test(test_get_c2h5oh),
-		ztest_unit_test(test_get_h2),
-		ztest_unit_test(test_get_nh3),
-		ztest_unit_test(test_get_ch4),
 		ztest_unit_test(test_unspported_channel)
 	);
 	ztest_run_test_suite(gas_sensor_tests);

@@ -1,0 +1,15 @@
+/*
+ * Copyright 2021 LION
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	gas_sensor: mics4514 {
+		label = "MICS4514";
+		compatible = "amphenol,mics4514";
+		io-channels = <&adc 1>;
+		rload-red-ohms = <1000>;
+		rload-ox-ohms = <2000>;
+	};
+};

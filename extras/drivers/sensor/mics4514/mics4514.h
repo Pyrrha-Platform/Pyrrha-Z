@@ -26,6 +26,9 @@
  */
 struct mics4514_sensor_data {
 	uint8_t status;
+	uint16_t raw;
+	uint16_t co;
+	uint16_t no2;
 };
 
 /**
@@ -33,18 +36,32 @@ struct mics4514_sensor_data {
  * 
  */
 struct mics4514_data {
-	const struct device *adc;
 	struct adc_channel_cfg ch_cfg;
 	struct mics4514_sensor_data sensor;
 };
 
+#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+	struct gpio_channel_config {
+		const char *label;
+		uint8_t pin;
+		uint8_t flags;
+	};
+#endif
 /**
  * @brief configuration data for mics4514
  * 
  */
 struct mics4514_config {
 	const struct device *adc;
+	#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+	const struct device *gpio;
+	#endif
+	#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+	const struct gpio_channel_config gpio_cfg;
+	#endif
 	uint8_t adc_channel;
+	uint32_t rload_red;
+	uint32_t rload_ox;
 };
 
 #endif /* PYRRHA_DRIVERS_SENSOR_MICS4514_MICS4514_H_ */

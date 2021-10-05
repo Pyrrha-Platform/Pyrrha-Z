@@ -3,6 +3,6 @@
 
 menuconfig MICS4514
 	bool "MICS4514 MOS gas sensor"
-	depends on ADC
+	depends on ADC && GPIO
 	help
 	  Enable driver for MICS4514.

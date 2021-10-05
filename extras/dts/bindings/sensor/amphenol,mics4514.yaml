@@ -5,3 +5,23 @@ description: |
 compatible: "amphenol,mics4514"
 
 include: base.yaml
+
+properties:
+    io-channels:
+        required: true
+        description: IO channel for sensor measurement
+
+    rload-red-ohms:
+        type: int
+        required: true
+        description: Resistance of the load resistor for the CO sensor
+
+    rload-ox-ohms:
+        type: int
+        required: true
+        description: Resistance of the load resistor for the NOX sensor
+
+    preheat-gpios:
+        type: phandle-array
+        required: false
+        description: I/O used to control preheat function of sensor
