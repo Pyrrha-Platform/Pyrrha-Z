@@ -24,7 +24,9 @@ jobs:
         working-directory: Pyrrha-Z
         run: |
           ../rtos/zephyr/scripts/twister -v --tag pyrrha -T .
-
+        env:
+          ZEPHYR_TOOLCHAIN_VARIANT: zephyr
+          
       - name: Build firmware
         working-directory: Pyrrha-Z
         run: |
