@@ -19,15 +19,17 @@ jobs:
           west init -l .
           west update
           pip3 install -r ../rtos/zephyr/scripts/requirements-base.txt
-      
-      - name: Build firmware
-        working-directory: Pyrrha-Z
-        run: |
-          west build -b nrf52840dk_nrf52840 -s app
-      
+
       - name: Run Tests
         working-directory: Pyrrha-Z
         run: |
           ../rtos/zephyr/scripts/twister -v --tag pyrrha -T .
         env:
-          ZEPHYR_TOOLCHAIN_VARIANT: zephyr
+          CMAKE_PREFIX_PATH: /opt/toolchains
+
+      - name: Build firmware
+        working-directory: Pyrrha-Z
+        run: |
+          west build -b nrf52840dk_nrf52840 -s app
+        env:
+          CMAKE_PREFIX_PATH: /opt/toolchains

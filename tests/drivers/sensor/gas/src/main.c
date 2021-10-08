@@ -26,10 +26,8 @@ const struct device *get_gas_sensor_device(void){
 static void test_get_sensor_value(int16_t channel){
     struct sensor_value value;
 	const struct device *dev = get_gas_sensor_device();
-	int rc = sensor_sample_fetch_chan(dev, channel);
-	zassert_true(rc == 0, "Sample fetch failed: rc=%d", rc);
-	rc = sensor_channel_get(dev, channel, &value);
-	zassert_true( rc == 0, "Get sensor value failed: rc=%d", rc);
+	zassert_true(sensor_sample_fetch_chan(dev, channel) == 0, "Sample fetch failed");
+	zassert_true(sensor_channel_get(dev, channel, &value) == 0, "Get sensor value failed");
 }
 
 void test_get_sensor_value_not_supp(int16_t channel)
