@@ -10,6 +10,7 @@
 		compatible = "amphenol,mics4514";
 		io-channels = <&adc 2>, <&adc 1>;
 		io-channel-names = "RED", "OX";
+		preheat-gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
 		rload-red-ohms = <47000>;
 		rload-ox-ohms = <22000>;
 	};

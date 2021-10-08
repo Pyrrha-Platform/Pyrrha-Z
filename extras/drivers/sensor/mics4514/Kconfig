@@ -3,6 +3,30 @@
 
 menuconfig MICS4514
 	bool "MICS4514 MOS gas sensor"
-	depends on ADC && GPIO
+	depends on ADC && GPIO && NEWLIB_LIBC
 	help
 	  Enable driver for MICS4514.
+if MICS4514
+config MICS4514_DEFAULT_CO_R0
+	int
+	range 0 100000
+	default 41377
+	help
+	  The calibrated value in ohms of the stable sensor resistance
+	  at 1000 ppm CO concentration.
+	
+config MICS4514_DEFAULT_NO2_R0
+	int
+	range 0 100000
+	default 900
+	help
+	  The calibrated value in ohms of the stable sensor resistance
+	  at 1000 ppm NO2 concentration.
+
+config MICS4514_SENSOR_VREF_MV
+	int
+	range 3000 5100
+	default 3300
+	help
+	  The voltage reference for the sensor, used to calulate sensor resistance
+endif

@@ -26,9 +26,10 @@ const struct device *get_gas_sensor_device(void){
 static void test_get_sensor_value(int16_t channel){
     struct sensor_value value;
 	const struct device *dev = get_gas_sensor_device();
-
-	zassert_true(sensor_sample_fetch_chan(dev, channel) == 0, "Sample fetch failed");
-	zassert_true(sensor_channel_get(dev, channel, &value) == 0, "Get sensor value failed");
+	int rc = sensor_sample_fetch_chan(dev, channel);
+	zassert_true(rc == 0, "Sample fetch failed: rc=%d", rc);
+	rc = sensor_channel_get(dev, channel, &value);
+	zassert_true( rc == 0, "Get sensor value failed: rc=%d", rc);
 }
 
 void test_get_sensor_value_not_supp(int16_t channel)
@@ -38,19 +39,12 @@ void test_get_sensor_value_not_supp(int16_t channel)
 	zassert_true(sensor_sample_fetch_chan(dev, channel) == -ENOTSUP, "Unsupported channels should return -ENOTSUP");
 }
 
-static bool is_channel_supported(int16_t channel){
-	/* Only the "all" channel is supported in the default channels */
-	return channel == SENSOR_CHAN_ALL;
-}
-
 static void test_unspported_channel(void){
 
 	/* for all channels */
 	for (int c = 0; c < SENSOR_CHAN_ALL; c++){
-		/* If the channel is unsupported */
-		if (!is_channel_supported(c)){
-			test_get_sensor_value_not_supp(c);
-		}
+		/* All standard channels are unsupported */
+		test_get_sensor_value_not_supp(c);
 	}
 }
 

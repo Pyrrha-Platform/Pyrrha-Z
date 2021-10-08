@@ -20,24 +20,28 @@
 #include <sys/util.h>
 #include <drivers/gpio.h>
 
-/**
- * @brief data structure containing all data retreived from mics4514 on fetch
- * 
- */
-struct mics4514_sensor_data {
-	uint8_t status;
-	uint16_t raw;
-	uint16_t co;
-	uint16_t no2;
+#define NUM_MICS4514_ADC_CHANNELS 2
+
+enum MICS4514_ADC_CHANNELS{
+	ADC_CHANNEL_CO = 0,
+	ADC_CHANNEL_NO2
 };
+
+#if DT_PROP_LEN(DT_DRV_INST(0), io_channels) != NUM_MICS4514_ADC_CHANNELS
+#error "MiCS4511 requires (2) ADC channels to be configured"
+#elif !DT_SAME_NODE( \
+	DT_PHANDLE_BY_IDX(DT_DRV_INST(0), io_channels, 0), \
+	DT_PHANDLE_BY_IDX(DT_DRV_INST(0), io_channels, 1))
+#error "Channels have to use the same ADC."
+#endif
 
 /**
  * @brief Device driver data for mics4514
  * 
  */
 struct mics4514_data {
-	struct adc_channel_cfg ch_cfg;
-	struct mics4514_sensor_data sensor;
+	struct adc_channel_cfg ch_cfg[NUM_MICS4514_ADC_CHANNELS];
+	uint16_t raw_data[NUM_MICS4514_ADC_CHANNELS];
 };
 
 #if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
@@ -47,6 +51,7 @@ struct mics4514_data {
 		uint8_t flags;
 	};
 #endif
+
 /**
  * @brief configuration data for mics4514
  * 
@@ -59,7 +64,7 @@ struct mics4514_config {
 	#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
 	const struct gpio_channel_config gpio_cfg;
 	#endif
-	uint8_t adc_channel;
+	uint8_t adc_channel[NUM_MICS4514_ADC_CHANNELS];
 	uint32_t rload_red;
 	uint32_t rload_ox;
 };
