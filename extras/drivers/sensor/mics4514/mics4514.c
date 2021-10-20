@@ -118,13 +118,14 @@ static double calculate_ppm(const struct curve_interp_cfg * curve, int32_t vs_mv
 static int mics4514_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
 	const struct mics4514_config *cfg = dev->config;
+	#if MICS4514_PREHEAT_ENABLED
 	struct mics4514_data *data = dev->data;
-	int rc = -EBUSY;
 	if (data->preheat_state != PREHEAT_COMPLETE){
 		LOG_WRN("Trying to fetch sensor value before preheat is finished");
-		return rc;
+		return -EBUSY;
 	}
-	rc = -ENOTSUP;
+	#endif
+	int rc = -ENOTSUP;
 	switch ((int)chan){
 		case SENSOR_CHAN_MICS4514_NO2:
 		case SENSOR_CHAN_MICS4514_CO:
@@ -155,10 +156,12 @@ static int mics4514_channel_get(const struct device *dev,
 {
 	struct mics4514_data *data = dev->data;
 	const struct mics4514_config *cfg = dev->config;
+	#if MICS4514_PREHEAT_ENABLED
 	if (data->preheat_state != PREHEAT_COMPLETE){
 		LOG_WRN("Trying to get sensor value before preheat is finished");
 		return -EBUSY;
 	}
+	#endif
 	uint16_t vref = adc_ref_internal(cfg->adc);
 	
 	int rc = -ENOTSUP;
@@ -195,7 +198,7 @@ static int mics4514_channel_get(const struct device *dev,
 	}
 	return rc;
 }
-
+#if MICS4514_PREHEAT_ENABLED
 static void end_gpio_preheat(struct k_timer * _timer){
 	const struct device  *dev = \
 		(const struct device *)_timer->user_data;
@@ -206,6 +209,7 @@ static void end_gpio_preheat(struct k_timer * _timer){
 	drv_data->preheat_state = PREHEAT_COMPLETE;
 	LOG_DBG("Preheating complete");
 }
+#endif
 
 /**
  * @brief Initialize and configure mics4514 sensor
