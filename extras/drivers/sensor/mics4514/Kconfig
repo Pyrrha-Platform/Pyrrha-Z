@@ -29,4 +29,11 @@ config MICS4514_SENSOR_VREF_MV
 	default 3300
 	help
 	  The voltage reference for the sensor, used to calulate sensor resistance
+
+config MICS4514_PREHEAT_SECONDS
+	int
+	range 0 120
+	default 30
+	help
+	  The amount of time (in seconds) to run the preheat function
 endif

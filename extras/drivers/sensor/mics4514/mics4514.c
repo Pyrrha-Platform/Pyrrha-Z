@@ -53,6 +53,17 @@ struct curve_interp_cfg{
 	float y_int;
 };
 
+#if MICS4514_PREHEAT_ENABLED
+
+/**
+ * @brief Callback which turns off the preheat gpio
+ * 
+ * @param _timer : Timer object being worked on.
+ */
+static void end_gpio_preheat(struct k_timer * _timer);
+K_TIMER_DEFINE(preheat_timer, end_gpio_preheat, NULL);
+#endif
+
 /**
  * Figures derived from interpolation of concentration curves in sensor datasheet.
  * Interpolation tables collected here: https://myscope.net/auswertung-der-airpi-gas-sensoren/
@@ -107,7 +118,13 @@ static double calculate_ppm(const struct curve_interp_cfg * curve, int32_t vs_mv
 static int mics4514_sample_fetch(const struct device *dev, enum sensor_channel chan)
 {
 	const struct mics4514_config *cfg = dev->config;
-	int rc = -ENOTSUP;
+	struct mics4514_data *data = dev->data;
+	int rc = -EBUSY;
+	if (data->preheat_state != PREHEAT_COMPLETE){
+		LOG_WRN("Trying to fetch sensor value before preheat is finished");
+		return rc;
+	}
+	rc = -ENOTSUP;
 	switch ((int)chan){
 		case SENSOR_CHAN_MICS4514_NO2:
 		case SENSOR_CHAN_MICS4514_CO:
@@ -138,6 +155,10 @@ static int mics4514_channel_get(const struct device *dev,
 {
 	struct mics4514_data *data = dev->data;
 	const struct mics4514_config *cfg = dev->config;
+	if (data->preheat_state != PREHEAT_COMPLETE){
+		LOG_WRN("Trying to get sensor value before preheat is finished");
+		return -EBUSY;
+	}
 	uint16_t vref = adc_ref_internal(cfg->adc);
 	
 	int rc = -ENOTSUP;
@@ -175,6 +196,17 @@ static int mics4514_channel_get(const struct device *dev,
 	return rc;
 }
 
+static void end_gpio_preheat(struct k_timer * _timer){
+	const struct device  *dev = \
+		(const struct device *)_timer->user_data;
+	struct mics4514_data *drv_data = dev->data;
+	const struct mics4514_config *cfg = dev->config;
+	
+	gpio_pin_set(cfg->gpio, cfg->gpio_cfg.pin, 0);
+	drv_data->preheat_state = PREHEAT_COMPLETE;
+	LOG_DBG("Preheating complete");
+}
+
 /**
  * @brief Initialize and configure mics4514 sensor
  * 
@@ -192,14 +224,16 @@ static int mics4514_init(const struct device *dev)
 		return -EINVAL;
 	}
 
-	#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+	#if MICS4514_PREHEAT_ENABLED
 		if (!device_is_ready(cfg->gpio)) {
 			LOG_ERR("Preheat GPIO device is not ready.");
 			return -EINVAL;
 		}
-
 		/* Configure GPIO but don't turn it on */
-		gpio_pin_configure(cfg->gpio, cfg->gpio_cfg.pin, GPIO_OUTPUT_INACTIVE | cfg->gpio_cfg.flags);
+		gpio_pin_configure(cfg->gpio, cfg->gpio_cfg.pin, GPIO_OUTPUT_ACTIVE | cfg->gpio_cfg.flags);
+		preheat_timer.user_data = (void *)dev;
+		k_timer_start(&preheat_timer, K_SECONDS(CONFIG_MICS4514_PREHEAT_SECONDS), K_NO_WAIT);
+		drv_data->preheat_state = PREHEAT_IN_PROGRESS;
 	#endif 
 
 	adc_table.buffer = drv_data->raw_data;
@@ -225,10 +259,15 @@ static int mics4514_init(const struct device *dev)
 	return 0;
 }
 
-static struct mics4514_data mics4514_data;
+static struct mics4514_data mics4514_data = {
+	.raw_data = {0},
+	#if MICS4514_PREHEAT_ENABLED
+	.preheat_state = PREHEAT_NOT_STARTED,
+	#endif
+};
 static const struct mics4514_config mics4514_cfg = {
 	.adc = DEVICE_DT_GET(DT_INST_IO_CHANNELS_CTLR(0)),
-	#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+	#if MICS4514_PREHEAT_ENABLED
 	.gpio = DEVICE_DT_GET(DT_INST_PHANDLE(0, preheat_gpios)),
 	.gpio_cfg = {
 		.label = DT_INST_GPIO_LABEL(0, preheat_gpios),

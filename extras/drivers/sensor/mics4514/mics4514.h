@@ -27,6 +27,14 @@ enum MICS4514_ADC_CHANNELS{
 	ADC_CHANNEL_NO2
 };
 
+typedef enum MICS4514_PREHEAT_STATES{
+	PREHEAT_NOT_STARTED = 0,
+	PREHEAT_IN_PROGRESS,
+	PREHEAT_COMPLETE
+}preheat_state_t;
+
+#define MICS4514_PREHEAT_ENABLED (DT_INST_NODE_HAS_PROP(0, preheat_gpios) && (CONFIG_MICS4514_PREHEAT_SECONDS > 0))
+
 #if DT_PROP_LEN(DT_DRV_INST(0), io_channels) != NUM_MICS4514_ADC_CHANNELS
 #error "MiCS4511 requires (2) ADC channels to be configured"
 #elif !DT_SAME_NODE( \
@@ -42,9 +50,12 @@ enum MICS4514_ADC_CHANNELS{
 struct mics4514_data {
 	struct adc_channel_cfg ch_cfg[NUM_MICS4514_ADC_CHANNELS];
 	uint16_t raw_data[NUM_MICS4514_ADC_CHANNELS];
+	#if MICS4514_PREHEAT_ENABLED
+		preheat_state_t preheat_state; 
+	#endif
 };
 
-#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+#if MICS4514_PREHEAT_ENABLED
 	struct gpio_channel_config {
 		const char *label;
 		uint8_t pin;
@@ -58,11 +69,12 @@ struct mics4514_data {
  */
 struct mics4514_config {
 	const struct device *adc;
-	#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+	#if MICS4514_PREHEAT_ENABLED
 	const struct device *gpio;
 	#endif
-	#if DT_INST_NODE_HAS_PROP(0, preheat_gpios)
+	#if MICS4514_PREHEAT_ENABLED
 	const struct gpio_channel_config gpio_cfg;
+	preheat_state_t preheat_state; 
 	#endif
 	uint8_t adc_channel[NUM_MICS4514_ADC_CHANNELS];
 	uint32_t rload_red;
