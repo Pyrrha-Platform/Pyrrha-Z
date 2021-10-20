@@ -1,0 +1,16 @@
+sample:
+  name: Gas Sensor Sample
+  description: Demonstrate basic usage of gas sensor
+common:
+  tags: pyrrha sensor gas
+tests:
+  sample.sensor.mics4514:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    extra_args: CONF_FILE="prj.conf;overlays/mics4514.conf" DTC_OVERLAY_FILE="overlays/mics4514.overlay"
+    tags: mics4514
+  sample.sensor.mics4514.preheat:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    extra_args: CONF_FILE="prj.conf;overlays/mics4514.conf" DTC_OVERLAY_FILE="overlays/mics4514_preheat.overlay"
+    tags: mics4514 preheat

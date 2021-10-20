@@ -15,4 +15,8 @@ build:
 tests:
   # Path(s) to the directory tree(s) containing `testcase.yaml` files.
   # This is for use by `twister` to discover testcases to run.
-  - ./tests+
+  - ./tests
+
+samples:
+  # Path(s) to the directory tree(s) containing `sample.yaml` files.
+  - ./samples 

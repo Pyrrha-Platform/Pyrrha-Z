@@ -1,0 +1,11 @@
+tests:
+  drivers.sensor.gas.mics4514:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    extra_args: CONF_FILE="prj.conf;overlays/mics4514.conf" DTC_OVERLAY_FILE="overlays/mics4514.overlay"
+    tags: pyrrha gas mics4514
+  drivers.sensor.gas.mics4514.preheat:
+    build_only: true
+    platform_allow: nrf52840dk_nrf52840
+    extra_args: CONF_FILE="prj.conf;overlays/mics4514_preheat.conf" DTC_OVERLAY_FILE="overlays/mics4514_preheat.overlay"
+    tags: pyrrha gas mics4514 preheat

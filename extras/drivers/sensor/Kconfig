@@ -3,4 +3,5 @@
 
 if SENSOR
 rsource "cc2d23s/Kconfig"
+rsource "mics4514/Kconfig"
 endif # SENSOR
