@@ -8,7 +8,7 @@ menuconfig MICS4514
 	  Enable driver for MICS4514.
 if MICS4514
 config MICS4514_DEFAULT_CO_R0
-	int
+	int "Default calibrated CO sensor resistance R0"
 	range 0 100000
 	default 41377
 	help
@@ -16,7 +16,7 @@ config MICS4514_DEFAULT_CO_R0
 	  at 1000 ppm CO concentration.
 	
 config MICS4514_DEFAULT_NO2_R0
-	int
+	int "Default calibrated NO2 sensor resistance R0"
 	range 0 100000
 	default 900
 	help
@@ -24,14 +24,14 @@ config MICS4514_DEFAULT_NO2_R0
 	  at 1000 ppm NO2 concentration.
 
 config MICS4514_SENSOR_VREF_MV
-	int
+	int "Sensor voltage reference in mv"
 	range 3000 5100
 	default 3300
 	help
 	  The voltage reference for the sensor, used to calulate sensor resistance
 
 config MICS4514_PREHEAT_SECONDS
-	int
+	int "Sensor preheat time in seconds"
 	range 0 120
 	default 30
 	help
