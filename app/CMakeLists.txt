@@ -12,4 +12,12 @@ project(app LANGUAGES C VERSION 0.1.0)
 configure_file(app_version.h.in ${CMAKE_BINARY_DIR}/app/include/app_version.h)
 target_include_directories(app PRIVATE ${CMAKE_BINARY_DIR}/app/include src)
 
-target_sources(app PRIVATE src/main.c)
+set(PYRRHA_SOURCES
+    src/main.c
+    src/collector.c
+    src/encoder.c
+    src/gas.c
+    src/rht.c
+)
+target_include_directories(app PRIVATE include src)
+target_sources(app PRIVATE ${PYRRHA_SOURCES})

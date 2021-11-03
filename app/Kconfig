@@ -10,3 +10,32 @@ endmenu
 module = PYRRHA
 module-str = PYRRHA
 source "subsys/logging/Kconfig.template.log_config"
+
+menu "pyrrha threads"
+menu "stacks"
+config PYRRHA_COLLECTION_STACKSIZE
+	int "Size of the stack allowed for the collection process"
+	range 512 8192
+	default 4096
+	help
+	  This value controls the size of the stack (in bytes)
+	  allowed for the collection process
+endmenu
+
+menu "priorities"
+config PYRRHA_COLLECTION_PRIORITY
+	int "Priority for the collection process"
+	range 0 7
+	default 7
+endmenu
+endmenu
+
+config PYRRHA_SAMPLE_PERIOD
+    int "Period (in seconds) of sensor data collection"
+    range 1 300
+    default 10
+
+config PYRRHA_COLLECTION_START_DELAY
+    int "Delay (in milliseconds) before starting the collection process"
+    range 0 100000
+    default 0
