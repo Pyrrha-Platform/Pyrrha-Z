@@ -39,3 +39,8 @@ config PYRRHA_COLLECTION_START_DELAY
     int "Delay (in milliseconds) before starting the collection process"
     range 0 100000
     default 0
+
+config PYRRHA_MESSAGE_BUFF_SIZE
+	int "Size of the buffer used to hold an encoded message (in bytes)"
+	range 192 1024
+	default 512

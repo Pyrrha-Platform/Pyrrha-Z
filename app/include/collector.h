@@ -19,6 +19,7 @@
 #define ERR_RHT_SENSOR  BIT(1)
 
 struct pyrrha_data{
+    uint32_t timestamp;
     struct gas_sensor_data gas;
     struct rht_data rht;
     uint8_t err;

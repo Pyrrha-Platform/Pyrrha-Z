@@ -14,12 +14,45 @@
 #include <logging/log.h>
 #include <collector.h>
 #include <encoder.h>
+#include <data/json.h>
 
 LOG_MODULE_REGISTER(encoder, CONFIG_PYRRHA_LOG_LEVEL);
 
+static const struct json_obj_descr sensor_descr[] = {
+    JSON_OBJ_DESCR_PRIM_NAMED(struct sensor_value, "i", val1, JSON_TOK_NUMBER),
+    JSON_OBJ_DESCR_PRIM_NAMED(struct sensor_value, "f", val2, JSON_TOK_NUMBER),
+};
+
+static const struct json_obj_descr gas_sensor_descr[] = {
+    JSON_OBJ_DESCR_OBJECT_NAMED(struct gas_sensor_data, "co", co, sensor_descr),
+    JSON_OBJ_DESCR_OBJECT_NAMED(struct gas_sensor_data, "no2", no2, sensor_descr),
+};
+
+static const struct json_obj_descr rht_sensor_descr[] = {
+    JSON_OBJ_DESCR_OBJECT_NAMED(struct rht_data, "temp", temperature, sensor_descr),
+    JSON_OBJ_DESCR_OBJECT_NAMED(struct rht_data, "humidity", humidity, sensor_descr),
+};
+
+static const struct json_obj_descr sensor_data_desc[] = {
+    JSON_OBJ_DESCR_PRIM(struct pyrrha_data, timestamp, JSON_TOK_NUMBER),
+    JSON_OBJ_DESCR_PRIM(struct pyrrha_data, err, JSON_TOK_NUMBER),
+    JSON_OBJ_DESCR_OBJECT(struct pyrrha_data, gas, gas_sensor_descr),
+    JSON_OBJ_DESCR_OBJECT(struct pyrrha_data, rht, rht_sensor_descr)
+};
+
 int sensor_data_encode(struct pyrrha_data * data){
-    printk("temperature (C)=%d, humidity (%%)=%d, CO(ppm)=%d.%d, NO2(ppm)=%d.%d err= 0x%02x\n", \
-		data->rht.temperature.val1, data->rht.humidity.val1, data->gas.co.val1, \
-        data->gas.co.val2, data->gas.no2.val1, data->gas.no2.val2, data->err);
+    char buffer[CONFIG_PYRRHA_MESSAGE_BUFF_SIZE] = {0};
+	ssize_t len = json_calc_encoded_len(sensor_data_desc, ARRAY_SIZE(sensor_data_desc), data);
+
+    if (len > sizeof(buffer)){
+        LOG_ERR("Encoding json object would result in overflow. Aborting");
+        return -EMSGSIZE;
+    }
+
+    json_obj_encode_buf(sensor_data_desc, ARRAY_SIZE(sensor_data_desc), data,
+        buffer, sizeof(buffer));
+    
+    LOG_DBG("message (%d bytes): %s", len, log_strdup(buffer));
+
     return 0;
 }

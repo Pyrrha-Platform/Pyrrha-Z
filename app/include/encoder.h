@@ -12,8 +12,6 @@
 #ifndef __PYRRHA_ENCODER_H
 #define __PYRRHA_ENCODER_H
 
-#include <collector.h>
-
 int sensor_data_encode(struct pyrrha_data * data);
 
 #endif
