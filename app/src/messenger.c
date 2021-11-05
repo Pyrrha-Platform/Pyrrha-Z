@@ -12,6 +12,7 @@
 #include <encoder.h>
 #include <collector.h>
 #include <messenger.h>
+#include <bluetooth.h>
 #include <logging/log.h>
 
 LOG_MODULE_REGISTER(messenger, CONFIG_PYRRHA_LOG_LEVEL);

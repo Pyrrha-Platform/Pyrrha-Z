@@ -19,6 +19,7 @@ set(PYRRHA_SOURCES
     src/gas.c
     src/rht.c
     src/messenger.c
+    src/bluetooth.c
 )
 target_include_directories(app PRIVATE include src)
 target_sources(app PRIVATE ${PYRRHA_SOURCES})
