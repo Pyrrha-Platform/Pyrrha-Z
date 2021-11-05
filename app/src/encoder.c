@@ -40,19 +40,17 @@ static const struct json_obj_descr sensor_data_desc[] = {
     JSON_OBJ_DESCR_OBJECT(struct pyrrha_data, rht, rht_sensor_descr)
 };
 
-int sensor_data_encode(struct pyrrha_data * data){
-    char buffer[CONFIG_PYRRHA_MESSAGE_BUFF_SIZE] = {0};
+int sensor_data_encode(struct pyrrha_data * data, char * buffer, size_t buffer_len){
+
 	ssize_t len = json_calc_encoded_len(sensor_data_desc, ARRAY_SIZE(sensor_data_desc), data);
 
-    if (len > sizeof(buffer)){
-        LOG_ERR("Encoding json object would result in overflow. Aborting");
-        return -EMSGSIZE;
+    if (len > buffer_len){
+        LOG_ERR("Encoding json object would result in overflow. Need %d bytes (%d allowed)", len, buffer_len);
+        return -ENOMEM;
     }
 
     json_obj_encode_buf(sensor_data_desc, ARRAY_SIZE(sensor_data_desc), data,
-        buffer, sizeof(buffer));
-    
-    LOG_DBG("message (%d bytes): %s", len, log_strdup(buffer));
+        buffer, buffer_len);
 
     return 0;
 }

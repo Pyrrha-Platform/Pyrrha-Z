@@ -16,15 +16,26 @@ menu "stacks"
 config PYRRHA_COLLECTION_STACKSIZE
 	int "Size of the stack allowed for the collection process"
 	range 512 8192
-	default 4096
+	default 2048
 	help
 	  This value controls the size of the stack (in bytes)
 	  allowed for the collection process
+config PYRRHA_MESSAGING_STACKSIZE
+	int "Size of the stack allowed for the messaging process"
+	range 512 8192
+	default 4096
+	help
+	  This value controls the size of the stack (in bytes)
+	  allowed for the messaging process
 endmenu
 
 menu "priorities"
 config PYRRHA_COLLECTION_PRIORITY
 	int "Priority for the collection process"
+	range 0 7
+	default 7
+config PYRRHA_MESSAGING_PRIORITY
+	int "Priority for the messaging process"
 	range 0 7
 	default 7
 endmenu
@@ -44,3 +55,13 @@ config PYRRHA_MESSAGE_BUFF_SIZE
 	int "Size of the buffer used to hold an encoded message (in bytes)"
 	range 192 1024
 	default 512
+
+config PYRRHA_MESSAGE_QUEUE_SIZE
+	int "Number of messages allowed in the message queue before it is full"
+	range 2 64
+	default 5
+
+config PYRRHA_MESSAGE_QUEUE_ALIGNMENT
+	int 
+	range 2 32
+	default 4
