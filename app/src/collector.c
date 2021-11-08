@@ -13,7 +13,7 @@
 #include <logging/log.h>
 #include <collector.h>
 #include <messenger.h>
-
+#include <timestamp.h>
 LOG_MODULE_REGISTER(collector, CONFIG_PYRRHA_LOG_LEVEL);
 
 void data_collection_process(void){
@@ -23,6 +23,7 @@ void data_collection_process(void){
         /* Capture data and record any errors for the host to filter */
         data.err |= (capture_gas_sensor_data(&data.gas) != 0 ? ERR_GAS_SENSOR : 0);
         data.err |= (capture_rht_data(&data.rht) != 0 ? ERR_RHT_SENSOR : 0);
+        data.timestamp = get_timestamp();
         capture_rht_data(&data.rht);
         queue_sensor_data(&data);
         k_sleep(K_SECONDS(CONFIG_PYRRHA_SAMPLE_PERIOD));
