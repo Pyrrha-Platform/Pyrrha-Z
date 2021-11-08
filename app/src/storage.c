@@ -23,6 +23,8 @@ struct record_walk_ctx{
 };
 
 #define FCB_DATA_VERSION    1
+#define RECORD_AREA_ID		FLASH_AREA_ID(records)
+
 static struct flash_sector fcb_area[CONFIG_PYRRHA_FCB_NUM_AREAS + 1];
 static struct fcb storage_cf = {
     .f_magic = CONFIG_PYRRHA_FCB_MAGIC,
@@ -89,8 +91,9 @@ int rotate_record_buffer(){
 static int storage_fcb_cfg(struct fcb * cf){
     int rc;
     while (1) {
-		rc = fcb_init(FLASH_AREA_ID(storage), cf);
+		rc = fcb_init(RECORD_AREA_ID, cf);
 		if (rc) {
+			LOG_DBG("fb_init failure: %d", rc);
 			return -EINVAL;
 		}
 		/*
@@ -122,14 +125,14 @@ static int storage_backend_init()
 	int rc;
 	const struct flash_area *fap;
 
-	rc = flash_area_get_sectors(FLASH_AREA_ID(storage), &cnt,
+	rc = flash_area_get_sectors(RECORD_AREA_ID, &cnt,
 				    fcb_area);
 	if (rc == -ENODEV) {
 		return rc;
 	} else if (rc != 0 && rc != -ENOMEM) {
 		k_panic();
 	}
-
+	LOG_DBG("Initializing flash area with %d sectors", cnt);
 	storage_cf.f_sector_cnt = cnt;
 	storage_cf.fap = fap;
 
@@ -138,7 +141,7 @@ static int storage_backend_init()
 	if (rc != 0) {
 		LOG_DBG("error configuring fcb: %d", rc);
         /* Error. Erase flash area and try again */
-		rc = flash_area_open(FLASH_AREA_ID(storage), &fap);
+		rc = flash_area_open(RECORD_AREA_ID, &fap);
 
 		if (rc == 0) {
 			rc = flash_area_erase(fap, 0, fap->fa_size);
