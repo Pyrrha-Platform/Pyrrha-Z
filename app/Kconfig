@@ -41,6 +41,21 @@ config PYRRHA_MESSAGING_PRIORITY
 endmenu
 endmenu
 
+menu "storage"
+config PYRRHA_FCB_NUM_AREAS
+	int "Number of flash areas used by the settings subsystem"
+	default 16
+	help
+	  Number of areas to allocate in the FCB. A smaller number is
+	  used if the flash hardware cannot support this value.
+
+config PYRRHA_FCB_MAGIC
+	hex "FCB magic for the settings subsystem"
+	default 0xf14ef14e
+	help
+	  Magic 32-bit word for to identify valid settings area
+endmenu
+
 config PYRRHA_SAMPLE_PERIOD
     int "Period (in seconds) of sensor data collection"
     range 1 300
