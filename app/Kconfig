@@ -10,3 +10,73 @@ endmenu
 module = PYRRHA
 module-str = PYRRHA
 source "subsys/logging/Kconfig.template.log_config"
+
+menu "pyrrha threads"
+menu "stacks"
+config PYRRHA_COLLECTION_STACKSIZE
+	int "Size of the stack allowed for the collection process"
+	range 512 8192
+	default 2048
+	help
+	  This value controls the size of the stack (in bytes)
+	  allowed for the collection process
+config PYRRHA_MESSAGING_STACKSIZE
+	int "Size of the stack allowed for the messaging process"
+	range 512 8192
+	default 4096
+	help
+	  This value controls the size of the stack (in bytes)
+	  allowed for the messaging process
+endmenu
+
+menu "priorities"
+config PYRRHA_COLLECTION_PRIORITY
+	int "Priority for the collection process"
+	range 0 7
+	default 7
+config PYRRHA_MESSAGING_PRIORITY
+	int "Priority for the messaging process"
+	range 0 7
+	default 7
+endmenu
+endmenu
+
+menu "storage"
+config PYRRHA_FCB_NUM_AREAS
+	int "Number of flash areas used by the settings subsystem"
+	default 16
+	help
+	  Number of areas to allocate in the FCB. A smaller number is
+	  used if the flash hardware cannot support this value.
+
+config PYRRHA_FCB_MAGIC
+	hex "FCB magic for the settings subsystem"
+	default 0xf14ef14e
+	help
+	  Magic 32-bit word for to identify valid settings area
+endmenu
+
+config PYRRHA_SAMPLE_PERIOD
+    int "Period (in seconds) of sensor data collection"
+    range 1 300
+    default 10
+
+config PYRRHA_COLLECTION_START_DELAY
+    int "Delay (in milliseconds) before starting the collection process"
+    range 0 100000
+    default 0
+
+config PYRRHA_MESSAGE_BUFF_SIZE
+	int "Size of the buffer used to hold an encoded message (in bytes)"
+	range 192 1024
+	default 512
+
+config PYRRHA_MESSAGE_QUEUE_SIZE
+	int "Number of messages allowed in the message queue before it is full"
+	range 2 64
+	default 5
+
+config PYRRHA_MESSAGE_QUEUE_ALIGNMENT
+	int 
+	range 2 32
+	default 4

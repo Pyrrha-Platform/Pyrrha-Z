@@ -4,6 +4,19 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+&mx25r64 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		record_partition: partition@0 {
+			label = "records";
+			reg = <0x0 0xff000>;
+		};
+	};
+};
+
 &i2c0 {
 	rht_sensor: cc2d23s@28 {
 		compatible = "amphenol,cc2d23s";
