@@ -11,6 +11,10 @@ module = PYRRHA
 module-str = PYRRHA
 source "subsys/logging/Kconfig.template.log_config"
 
+module = ALERTS
+module-str = ALERTS
+source "subsys/logging/Kconfig.template.log_config"
+
 menu "pyrrha threads"
 menu "stacks"
 config PYRRHA_COLLECTION_STACKSIZE
