@@ -25,6 +25,16 @@
 	};
 };
 
+&pwm0 {
+	status = "okay";
+	ch0-pin = <13>;
+	ch0-inverted;
+	ch1-pin = <14>;
+	ch1-inverted;
+	ch2-pin = <15>;
+	ch2-inverted;
+};
+
 / {
 	gas_sensor: mics4514 {
 		label = "MICS4514";
@@ -34,5 +44,22 @@
 		preheat-gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
 		rload-red-ohms = <47000>;
 		rload-ox-ohms = <22000>;
+	};
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm0 13>;
+		};
+		pwm_led1: pwm_led_1 {
+			pwms = <&pwm0 14>;
+		};
+		pwm_led2: pwm_led_2 {
+			pwms = <&pwm0 15>;
+		};
+	};
+	aliases {
+		red-pwm-led = &pwm_led0;
+		green-pwm-led = &pwm_led1;
+		blue-pwm-led = &pwm_led2;
 	};
 };

@@ -14,6 +14,7 @@
 #include <collector.h>
 #include <messenger.h>
 #include <timestamp.h>
+#include <alerts.h>
 LOG_MODULE_REGISTER(collector, CONFIG_PYRRHA_LOG_LEVEL);
 
 void data_collection_process(void){
@@ -25,7 +26,12 @@ void data_collection_process(void){
         data.err |= (capture_rht_data(&data.rht) != 0 ? ERR_RHT_SENSOR : 0);
         data.timestamp = get_timestamp();
         capture_rht_data(&data.rht);
+        
+        /* Queue data for storage and / or notification to a host */
         queue_sensor_data(&data);
+        /* Process any alerts based on current sample data */
+        generate_alerts(&data);
+
         k_sleep(K_SECONDS(CONFIG_PYRRHA_SAMPLE_PERIOD));
     }
 }

@@ -11,6 +11,10 @@ module = PYRRHA
 module-str = PYRRHA
 source "subsys/logging/Kconfig.template.log_config"
 
+module = ALERTS
+module-str = ALERTS
+source "subsys/logging/Kconfig.template.log_config"
+
 menu "pyrrha threads"
 menu "stacks"
 config PYRRHA_COLLECTION_STACKSIZE
@@ -54,6 +58,28 @@ config PYRRHA_FCB_MAGIC
 	default 0xf14ef14e
 	help
 	  Magic 32-bit word for to identify valid settings area
+endmenu
+
+menu "alerts"
+
+config CO_ALERT_THRESHOLD_PPM
+    int "Threshold in ppm for co alerts"
+    range 1 1000
+    default 420
+	help
+	  Threshold in PPM for CO level when an alert is generated.
+	  420ppm is the AEGL2 10 minute limit.
+config NO2_ALERT_THRESHOLD_PPM
+    int "Threshold in ppm for no2 alerts"
+    range 1 100
+    default 8
+	help
+	  Threshold in PPM for NO2 level when an alert is generated.
+	  20ppm is the AEGL2 10 minute limit.
+config TEMPERATURE_ALERT_THRESHOLD_CELCIUS
+    int "Threshold in celcius for temperature alerts"
+    range 60 120
+    default 80
 endmenu
 
 config PYRRHA_SAMPLE_PERIOD
