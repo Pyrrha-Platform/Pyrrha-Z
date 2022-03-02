@@ -1,7 +1,6 @@
 /**
  * @file bluetooth.c
  * @author Brian Bradley (brian.bradley.p@gmail.com)
- * @brief 
  * @date 2021-11-05
  * 
  * @copyright Copyright (C) 2021 LION
@@ -10,10 +9,8 @@
  * 
  */
 
-
 #include <zephyr.h>
 #include <init.h>
-#include <bluetooth.h>
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <string.h>
@@ -27,6 +24,9 @@
 #include <bluetooth/conn.h>
 #include <bluetooth/uuid.h>
 #include <bluetooth/gatt.h>
+#include <logging/log.h>
+
+LOG_MODULE_REGISTER(pyrrha_bluetooth, CONFIG_PYRRHA_BLUETOOTH_LOG_LEVEL);
 
 /* Custom Service Variables */
 #define BT_UUID_CUSTOM_SERVICE_VAL \
@@ -40,18 +40,19 @@ static struct bt_uuid_128 sensors_chrc_uuid = BT_UUID_INIT_128(
 
 
 static bool host_connected = false;
+
 static void pyrrha_conn_ready(void){
 	host_connected = true;
 }
+
 static void pyrrha_ccc_cfg_changed(const struct bt_gatt_attr *attr, uint16_t val)
 {
-
 	host_connected = (val == BT_GATT_CCC_NOTIFY);
 
 	if (host_connected) {
 		pyrrha_conn_ready();
 	}
-	printk("val %u %d\n", val, host_connected);
+	LOG_DBG("val %u %d", val, host_connected);
 }
 
 BT_GATT_SERVICE_DEFINE(pyrrha_svc,
@@ -63,14 +64,24 @@ BT_GATT_SERVICE_DEFINE(pyrrha_svc,
 		    BT_GATT_PERM_READ | BT_GATT_PERM_WRITE),
 );
 
-
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_CUSTOM_SERVICE_VAL),
 };
 
+static void exchange_func(struct bt_conn *conn, uint8_t err, struct bt_gatt_exchange_params *params)
+{
+	if (!err) {
+		LOG_DBG("MTU exchange done");
+	} else {
+		LOG_ERR("MTU exchange failed (err %" PRIu8 ")", err);
+	}
+}
+
 int notify_client(char * buffer, size_t len){
+	
 	if (host_connected){
+		LOG_HEXDUMP_DBG(buffer, len, "notification data");
     	return bt_gatt_notify(NULL, &pyrrha_svc.attrs[1], buffer, len);
 	}
 	return -ENODEV;
@@ -83,14 +94,19 @@ static void connected(struct bt_conn *conn, uint8_t err)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (err) {
-		printk("Failed to connect to %s (%u)\n", addr, err);
+		LOG_ERR("Failed to connect to %s (%u)", log_strdup(addr), err);
 		return;
 	}
 
-	printk("Connected %s\n", addr);
+	LOG_DBG("Connected %s", log_strdup(addr));
+
+	static struct bt_gatt_exchange_params exchange_params;
+
+	exchange_params.func = exchange_func;
+	bt_gatt_exchange_mtu(conn, &exchange_params);
 
 	if (bt_conn_set_security(conn, BT_SECURITY_L2)) {
-		printk("Failed to set security\n");
+		LOG_ERR("Failed to set security");
 	}
 }
 
@@ -100,7 +116,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	host_connected = false;
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
-	printk("Disconnected from %s (reason 0x%02x)\n", addr, reason);
+	LOG_DBG("Disconnected from %s (reason 0x%02x)", log_strdup(addr), reason);
 }
 
 static void security_changed(struct bt_conn *conn, bt_security_t level,
@@ -111,9 +127,9 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	if (!err) {
-		printk("Security changed: %s level %u\n", addr, level);
+		LOG_DBG("Security changed: %s level %u", log_strdup(addr), level);
 	} else {
-		printk("Security failed: %s level %u err %d\n", addr, level,
+		LOG_WRN("Security failed: %s level %u err %d", log_strdup(addr), level,
 		       err);
 	}
 }
@@ -127,30 +143,26 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 static void bt_ready(int err)
 {
 	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
+		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return;
 	}
-
-	printk("Bluetooth initialized\n");
-
+	LOG_INF("Bluetooth initialized");
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
 	}
-
 	err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
 	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
+		LOG_ERR("Advertising failed to start (err %d)", err);
 		return;
 	}
-
-	printk("Advertising successfully started\n");
+	LOG_DBG("Advertising successfully started");
 }
 
 static int bluetooth_init(){
     int ret;
 	ret = bt_enable(bt_ready);
 	if (ret) {
-		printk("Bluetooth init failed (err %d)\n", ret);
+		LOG_ERR("Bluetooth init failed (err %d)", ret);
 	}
     return ret;
 }

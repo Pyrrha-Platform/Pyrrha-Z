@@ -8,7 +8,27 @@ source "Kconfig.zephyr"
 endmenu
 
 module = PYRRHA
-module-str = PYRRHA
+module-str = pyrrha_bluetooth
+source "subsys/logging/Kconfig.template.log_config"
+
+module = PYRRHA_BLUETOOTH
+module-str = pyrrha_bluetooth
+source "subsys/logging/Kconfig.template.log_config"
+
+module = PYRRHA_MESSENGER
+module-str = pyrrha_messenger
+source "subsys/logging/Kconfig.template.log_config"
+
+module = PYRRHA_COLLECTOR
+module-str = pyrrha_collector
+source "subsys/logging/Kconfig.template.log_config"
+
+module = PYRRHA_STORAGE
+module-str = pyrrha_storage
+source "subsys/logging/Kconfig.template.log_config"
+
+module = PYRRHA_ENCODER
+module-str = pyrrha_encoder
 source "subsys/logging/Kconfig.template.log_config"
 
 menu "pyrrha threads"

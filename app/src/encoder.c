@@ -16,7 +16,7 @@
 #include <encoder.h>
 #include <data/json.h>
 
-LOG_MODULE_REGISTER(encoder, CONFIG_PYRRHA_LOG_LEVEL);
+LOG_MODULE_REGISTER(encoder, CONFIG_PYRRHA_ENCODER_LOG_LEVEL);
 
 static const struct json_obj_descr sensor_descr[] = {
     JSON_OBJ_DESCR_PRIM_NAMED(struct sensor_value, "int", val1, JSON_TOK_NUMBER),
