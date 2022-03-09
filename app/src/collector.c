@@ -14,7 +14,7 @@
 #include <collector.h>
 #include <messenger.h>
 #include <timestamp.h>
-LOG_MODULE_REGISTER(collector, CONFIG_PYRRHA_LOG_LEVEL);
+LOG_MODULE_REGISTER(collector, CONFIG_PYRRHA_COLLECTOR_LOG_LEVEL);
 
 void data_collection_process(void){
     struct pyrrha_data data = {0};

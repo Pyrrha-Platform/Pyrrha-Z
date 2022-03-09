@@ -15,7 +15,7 @@
 #include <fs/fcb.h>
 #include <logging/log.h>
 
-LOG_MODULE_REGISTER(storage, CONFIG_PYRRHA_LOG_LEVEL);
+LOG_MODULE_REGISTER(storage, CONFIG_PYRRHA_STORAGE_LOG_LEVEL);
 
 struct record_walk_ctx{
 	record_handler_cb cb;

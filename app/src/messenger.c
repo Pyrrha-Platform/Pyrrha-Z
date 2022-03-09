@@ -16,7 +16,7 @@
 #include <logging/log.h>
 #include <storage.h>
 
-LOG_MODULE_REGISTER(messenger, CONFIG_PYRRHA_LOG_LEVEL);
+LOG_MODULE_REGISTER(messenger, CONFIG_PYRRHA_MESSENGER_LOG_LEVEL);
 
 K_MSGQ_DEFINE(sensor_msgq, sizeof(struct pyrrha_data), \
     CONFIG_PYRRHA_MESSAGE_QUEUE_SIZE, CONFIG_PYRRHA_MESSAGE_QUEUE_ALIGNMENT);
